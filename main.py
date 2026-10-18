@@ -41,7 +41,7 @@ class UI(QMainWindow):
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
 
-        self.setWindowTitle("ListenToDevice")
+        self.setWindowTitle("Sidetone")
 
         self.api_dropdown = QComboBox()
         self.api_dropdown.currentIndexChanged.connect(self.populate_io)
