@@ -27,6 +27,8 @@ class UI(QMainWindow):
 
         super().__init__()
 
+        self.listening = False # might change for a Signal later if unstable
+
         # Required for Mica Transparency on Windows
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         if is_mica_supported():
@@ -53,30 +55,34 @@ class UI(QMainWindow):
         layout.addWidget(self.input_dropdown)
         layout.addWidget(self.output_dropdown)
 
-        listen_button = QPushButton("Listen")
-        listen_button.pressed.connect(self.on_listen)
-        layout.addWidget(listen_button)
+        self.listen_button = QPushButton("Start listening")
+        self.listen_button.pressed.connect(self.on_listen)
+        layout.addWidget(self.listen_button)
 
-        stop_listen_button = QPushButton("Stop Listening")
-        stop_listen_button.pressed.connect(stop)
-        layout.addWidget(stop_listen_button)
-
-        self.status_label = QLabel("Waiting")
+        self.status_label = QLabel("...")
         layout.addWidget(self.status_label)
         self.status_changed.connect(self.status_label.setText)
 
     def on_listen(self):
-        listen(
-            self.input_dropdown.currentData(),
-            self.output_dropdown.currentData(),
-            self.status_changed.emit
-        )
+        if not self.listening:
+            listen(
+                self.input_dropdown.currentData(),
+                self.output_dropdown.currentData(),
+                self.status_changed.emit
+            )
+            self.listen_button.setText("Stop listening")
+            self.listening = True
+        else:
+            stop()
+            self.listen_button.setText("Start listening")
+            self.listening = False
 
     def populate_apis(self):
         try:
             self.api_dropdown.clear()
             for index, api in enumerate(sd.query_hostapis()):
-                self.api_dropdown.addItem(api["name"], index)
+                if api["name"] != "Windows WDM-KS":
+                    self.api_dropdown.addItem(api["name"], index)
 
             self.api_dropdown.setCurrentIndex(sd.default.hostapi)
         except Exception as e:
@@ -116,4 +122,6 @@ if __name__ == "__main__":
 
     sys.exit(app.exec())
 
-# wdms-ks is erroring
+# wdms-ks is erroring, incompatible, so i removed it from the dropdown
+# add Signal to prevent button spam
+# use the sample rate of each device instead of hardcoding channels and samplerate
