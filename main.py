@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QMainWindow,
     QPushButton,
+    QSlider,
     QSpinBox,
     QWidget,
     QLineEdit,
@@ -15,7 +16,7 @@ from PySide6.QtCore import QTimer, Qt, Signal
 from winmica import BackdropType, EnableMica, is_mica_supported
 import sounddevice as sd
 import sys
-from listen import listen, stop
+from listen import listen, stop, set_volume
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
@@ -62,6 +63,12 @@ class UI(QMainWindow):
         self.status_label = QLabel("...")
         layout.addWidget(self.status_label)
         self.status_changed.connect(self.status_label.setText)
+
+        volume_slider = QSlider()
+        volume_slider.setOrientation(Qt.Orientation.Horizontal)
+        volume_slider.setRange(0,3)
+        volume_slider.valueChanged.connect(set_volume)
+        layout.addWidget(volume_slider)
 
     def on_listen(self):
         if not self.listening:
