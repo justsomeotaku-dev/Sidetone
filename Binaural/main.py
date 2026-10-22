@@ -44,28 +44,41 @@ class UI(QMainWindow):
 
         self.setWindowTitle("Binaural Beat Generator")
 
-        carrier_slider = QSlider(Qt.Orientation.Horizontal)
-        carrier_slider.setRange(0, 600)
-        carrier_slider.valueChanged.connect(set_carrier)
-        layout.addWidget(carrier_slider)
+        self.carrier_slider = QSlider(Qt.Orientation.Horizontal)
+        self.carrier_slider.setRange(0, 600)
+        self.carrier_slider.valueChanged.connect(set_carrier)
+        self.carrier_slider.valueChanged.connect(self.update_hz_label)
+        layout.addWidget(self.carrier_slider)
 
-        beat_slider = QSlider(Qt.Orientation.Horizontal)
-        beat_slider.setRange(0, 100)
-        beat_slider.valueChanged.connect(set_beat)
-        layout.addWidget(beat_slider)
+        self.beat_slider = QSlider(Qt.Orientation.Horizontal)
+        self.beat_slider.setRange(0, 100)
+        self.beat_slider.valueChanged.connect(set_beat)
+        self.beat_slider.valueChanged.connect(self.update_hz_label)
+        layout.addWidget(self.beat_slider)
 
-        volume_slider = QSlider(Qt.Orientation.Horizontal)
-        volume_slider.setRange(0,10)
-        volume_slider.valueChanged.connect(set_volume)
-        layout.addWidget(volume_slider)
+        self.volume_slider = QSlider(Qt.Orientation.Horizontal)
+        self.volume_slider.setRange(0,10)
+        self.volume_slider.valueChanged.connect(set_volume)
+        self.volume_slider.valueChanged.connect(self.update_hz_label)
+        layout.addWidget(self.volume_slider)
 
         self.start_button = QPushButton("Start listening")
         self.start_button.pressed.connect(self.on_listen)
         layout.addWidget(self.start_button)
 
+        self.hz_label = QLabel("0 Hz Left | 0 Hz Right | 0 Hz Binaural | 0 Volume")
+        layout.addWidget(self.hz_label)
+
         self.status_label = QLabel("...")
         layout.addWidget(self.status_label)
         self.status_changed.connect(self.status_label.setText)
+
+    def update_hz_label(self):
+        left_ear = self.carrier_slider.value()
+        right_ear = left_ear + self.beat_slider.value()
+        volume = self.volume_slider.value()
+        
+        self.hz_label.setText(f"{left_ear} Hz Left | {right_ear} Hz Right | {right_ear-left_ear} Hz Binaural | {volume} Volume")
 
     def on_listen(self):
         if not self.listening:

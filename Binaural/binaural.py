@@ -2,13 +2,13 @@ import numpy as np
 import sounddevice as sd  # pip install sounddevice numpy
 
 SR = 48000
-_carrier = 400.0  # Hz, left ear
-_beat = 40.0      # Hz, right ear = CARRIER + BEAT
+_carrier = 0.0  # Hz, left ear
+_beat = 0.0      # Hz, right ear = CARRIER + BEAT
 
 stream = None
 _status_callback = None
 
-_volume = 0.3
+_volume = 0
 
 
 phase = np.zeros(2)  # [left;right] angle / start where the wave is in the cycle.
