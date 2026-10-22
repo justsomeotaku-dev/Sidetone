@@ -58,7 +58,7 @@ class UI(QMainWindow):
 
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
         self.volume_slider.setRange(0,10)
-        self.volume_slider.valueChanged.connect(set_volume)
+        self.volume_slider.valueChanged.connect(self._set_volume)
         self.volume_slider.valueChanged.connect(self.update_hz_label)
         layout.addWidget(self.volume_slider)
 
@@ -72,6 +72,9 @@ class UI(QMainWindow):
         self.status_label = QLabel("...")
         layout.addWidget(self.status_label)
         self.status_changed.connect(self.status_label.setText)
+
+    def _set_volume(self, volume):
+        set_volume(volume/10)
 
     def update_hz_label(self):
         left_ear = self.carrier_slider.value()
